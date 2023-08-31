@@ -4,9 +4,8 @@
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="42.000000pt" height="42.000000pt" viewBox="0 0 42.000000 42.000000"
  preserveAspectRatio="xMidYMid meet">
-
 <g transform="translate(0.000000,42.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="url(#paint0_linear)" stroke="none">
 <path d="M184 355 c-4 -10 -14 -13 -29 -9 -17 4 -24 1 -27 -13 -2 -10 -12 -18
 -23 -18 -15 0 -19 -6 -17 -22 2 -16 -2 -23 -14 -23 -12 0 -15 -6 -11 -22 4
 -12 1 -28 -5 -35 -8 -9 -7 -18 3 -30 8 -9 14 -26 14 -37 0 -12 6 -21 15 -21 8
@@ -19,4 +18,10 @@ fill="#000000" stroke="none">
 <path d="M276 249 l-67 -62 -27 26 c-30 29 -52 35 -52 14 0 -15 61 -77 75 -77
 6 0 44 31 85 69 56 52 72 72 64 81 -9 9 -28 -4 -78 -51z"/>
 </g>
+<defs>
+<linearGradient id="paint0_linear" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0.259336" stop-color="#FFDB6E"/>
+<stop offset="1" stop-color="#FFBC5E"/>
+</linearGradient>
+</defs>
 </svg>
