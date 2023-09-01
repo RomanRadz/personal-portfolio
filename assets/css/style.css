@@ -565,7 +565,7 @@ main {
 }
 
 #skills h2 {
-    color: /* insert your heading color value here */;
+    color: var(--light-gray);
     margin-bottom: 50px;
 }
 
@@ -580,8 +580,8 @@ main {
     display: inline-block;
     margin: 7px;
     padding: 5px 10px;
-    color: /* insert your heading color value here */;
-    background: /* insert your background value here */;
+    color: var(--light-gray);
+    background: var(--bg-gradient-onyx);
     list-style: none;
     cursor: default;
     font-size: 1.2em;
