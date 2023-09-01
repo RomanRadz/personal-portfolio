@@ -555,6 +555,37 @@ main {
   line-height: 1.6;
 }
 
+/* -------------------------------
+   -----Skills Styles -----
+   ------------------------------- */
+
+#skills {
+    padding: 50px 15px;
+    text-align: center;
+}
+
+#skills h2 {
+    color: /* insert your heading color value here */;
+    margin-bottom: 50px;
+}
+
+#skills ul {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 800px;
+}
+
+#skills li {
+    display: inline-block;
+    margin: 7px;
+    padding: 5px 10px;
+    color: /* insert your heading color value here */;
+    background: /* insert your background value here */;
+    list-style: none;
+    cursor: default;
+    font-size: 1.2em;
+}
 
 /**
  * #testimonials 
