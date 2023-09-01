@@ -585,6 +585,7 @@ main {
     list-style: none;
     cursor: default;
     font-size: 1.2em;
+    border-radius: 14px;
 }
 
 /**
