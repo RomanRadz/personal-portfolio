@@ -1,0 +1,45 @@
+---
+- hosts: ec2-instance
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg
+        - lsb-release
+        - docker.io
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Add user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Pull Docker image from ECR
+      ansible.builtin.docker_image:
+        name: 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest
+        source: pull
+
+    - name: Run Docker container
+      ansible.builtin.docker_container:
+        name: portfolio_container
+        image: 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest
+        ports:
+          - "80:80"
+        restart_policy: unless-stopped
+        detach: yes
