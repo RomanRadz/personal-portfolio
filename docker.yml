@@ -17,11 +17,16 @@
         - curl
         - gnupg
         - lsb-release
-        - docker.io
 
-    - name: Add Docker APT repository
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    - name: Remove conflicting package
+      apt:
+        name: containerd.io
+        state: absent
+      ignore_errors: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
         state: present
 
     - name: Add user to docker group
