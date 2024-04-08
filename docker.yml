@@ -35,6 +35,10 @@
         groups: docker
         append: yes
 
+    - name: Login to ECR
+      amazon.aws.ecr_login:
+      region: us-east-2
+
     - name: Pull Docker image from ECR
       ansible.builtin.docker_image:
         name: 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest
