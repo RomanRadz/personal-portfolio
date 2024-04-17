@@ -36,10 +36,10 @@
         append: yes
 
     - name: Install botocore and boto3
-        pip:
-          name:
-            - botocore
-            - boto3
+      pip:
+        name:
+          - botocore
+          - boto3
 
     - name: Get instance profile info
       amazon.aws.aws_caller_info:
