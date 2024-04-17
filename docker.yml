@@ -35,8 +35,12 @@
         groups: docker
         append: yes
 
-    - name: Execute ECR login
-      command: "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 339713096223.dkr.ecr.us-east-2.amazonaws.com"
+- name: Execute ECR login
+  command: "aws ecr get-login-password --region us-east-2"
+  register: ecr_login_output
+
+- name: Docker login to ECR
+  command: "echo {{ ecr_login_output.stdout }} | docker login --username AWS --password-stdin 339713096223.dkr.ecr.us-east-2.amazonaws.com"
 
     - name: Pull Docker image from ECR
       command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
