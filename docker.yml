@@ -35,12 +35,25 @@
         groups: docker
         append: yes
 
-- name: Execute ECR login
-  command: "aws ecr get-login-password --region us-east-2"
-  register: ecr_login_output
+- name: Get instance profile info
+  amazon.aws.aws_caller_info:
+  register: aws_info
 
-- name: Docker login to ECR
-  command: "echo {{ ecr_login_output.stdout }} | docker login --username AWS --password-stdin 339713096223.dkr.ecr.us-east-2.amazonaws.com"
+- set_fact:
+    ecr_registry_url: "{{ aws_info.account_id }}.dkr.ecr.eu-west-1.amazonaws.com"
+
+- name: Get ECR token
+  shell: "aws ecr get-login-password --region eu-west-1"
+  register: ecr_token
+
+- name: Log into ECR registry
+  docker_login:
+    registry_url: "{{ ecr_registry_url }}"
+    debug: yes
+    username: "AWS"
+    password: "{{ ecr_token.stdout }}"
+    reauthorize: yes
+
 
     - name: Pull Docker image from ECR
       command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
