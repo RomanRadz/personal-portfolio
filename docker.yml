@@ -40,15 +40,15 @@
       register: aws_info
 
     - set_fact:
-      ecr_registry_url: "{{ aws_info.account_id }}.dkr.ecr.eu-west-1.amazonaws.com"
+      ecr_registry_url: "{{ aws_info.account }}.dkr.ecr.eu-west-1.amazonaws.com"
 
     - name: Get ECR token
-      shell: "aws ecr get-login-password --region us-east-2"
+      shell: "aws ecr get-login-password --region eu-west-1"
       register: ecr_token
 
     - name: Log into ECR registry
       docker_login:
-        registry_url: "339713096223.dkr.ecr.us-east-2.amazonaws.com"
+        registry_url: "{{ ecr_registry_url }}"
         debug: yes
         username: "AWS"
         password: "{{ ecr_token.stdout }}"
