@@ -35,23 +35,11 @@
         groups: docker
         append: yes
 
-    - name: Set up AWS environment variables for ECR login
-      command: "aws configure set AWS_ACCESS_KEY_ID {{ your_access_key }} && aws configure set AWS_SECRET_ACCESS_KEY {{ your_secret_key }}"
-      environment:
-        AWS_ACCESS_KEY_ID: "{{ your_access_key }}"
-        AWS_SECRET_ACCESS_KEY: "{{ your_secret_key }}"
-      delegate_to: localhost
-
-    - name: Login to ECR
-      community.aws.ecr_login:
-        region: us-east-2
-        aws_access_key: "{{ your_access_key }}"
-        aws_secret_key: "{{ your_secret_key }}"
+    - name: Execute ECR login
+      command: "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 339713096223.dkr.ecr.us-east-2.amazonaws.com"
 
     - name: Pull Docker image from ECR
-      ansible.builtin.docker_image:
-        name: 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest
-        source: pull
+      command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
 
     - name: Run Docker container
       ansible.builtin.docker_container:
