@@ -17,7 +17,6 @@
         - curl
         - gnupg
         - lsb-release
-        - jq        # Install jq for parsing JSON
 
     - name: Remove conflicting package
       apt:
@@ -36,17 +35,18 @@
         groups: docker
         append: yes
 
-    # Configure AWS CLI (assuming credentials are pre-configured)
-    - name: Configure AWS Region
-      community.aws.aws_cli_configure:
-        region: us-east-2
+    - name: Set up AWS environment variables for ECR login
+      command: "aws configure set AWS_ACCESS_KEY_ID {{ your_access_key }} && aws configure set AWS_SECRET_ACCESS_KEY {{ your_secret_key }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ your_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ your_secret_key }}"
+      delegate_to: localhost
 
-    # Login to ECR using AWS CLI and jq
     - name: Login to ECR
-      command: >
-        aws ecr get-login-password --region us-east-2 | 
-        docker login --username AWS --password-stdin 339713096223.dkr.ecr.us-east-2.amazonaws.com
-      register: ecr_login
+      community.aws.ecr_login:
+        region: us-east-2
+        aws_access_key: "{{ your_access_key }}"
+        aws_secret_key: "{{ your_secret_key }}"
 
     - name: Pull Docker image from ECR
       ansible.builtin.docker_image:
