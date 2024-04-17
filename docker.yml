@@ -51,7 +51,7 @@
 
     - name: Log into ECR registry
       docker_login:
-        registry_url: "{{ aws_info.account }}.dkr.ecr.us-east-2.amazonaws.com"
+        registry_url: "339713096223.dkr.ecr.us-east-2.amazonaws.com"
         debug: yes
         username: "AWS"
         password: "{{ ecr_token.stdout }}"
