@@ -45,7 +45,7 @@
     #   amazon.aws.aws_caller_info:
     #   register: aws_info
 
-    - name: Get ECR token
+    - name: Get ECR token (using environment variables)
       shell: "aws ecr get-login-password --region us-east-2"
       register: ecr_token
 
