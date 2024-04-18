@@ -48,6 +48,7 @@
     - name: Get ECR token (using environment variables)
       shell: "aws ecr get-login-password --region us-east-2"
       register: ecr_token
+      aws_credential: "{{ lookup('credential', 'aws-login') }}"
 
     - name: Log into ECR registry
       docker_login:
