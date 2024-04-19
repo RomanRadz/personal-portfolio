@@ -41,19 +41,13 @@
           - botocore
           - boto3
 
-    - name: Get ECR token (using credentials plugin)
-      shell: "aws ecr get-login-password --region us-east-2 | awk '{print $1}' | base64 -d"
-      register: ecr_token
-      environment:
-        AWS_ACCESS_KEY_ID: "{{ lookup('credential', 'aws-login') }}"
+    - name: Get ECR token using AWS CLI
+      command: aws ecr get-login-password --region us-east-2
+      register: ecr_login
+      ignore_errors: yes
 
-    - name: Log into ECR registry
-      docker_login:
-        registry_url: "339713096223.dkr.ecr.us-east-2.amazonaws.com"
-        debug: yes
-        username: "AWS"
-        password: "{{ ecr_token.stdout }}"
-        reauthorize: yes
+    - name: Login to ECR and Docker registry
+      command: docker login --username AWS --password {{ ecr_login.stdout }} 339713096223.dkr.ecr.us-east-2.amazonaws.com
 
     - name: Pull Docker image from ECR
       command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
