@@ -1,6 +1,5 @@
 ---
-- name: Update apt cache and install dependencies
-  hosts: ec2-instance
+- hosts: ec2-instance
   become: true
   tasks:
     - name: Update apt cache
@@ -36,23 +35,28 @@
         groups: docker
         append: yes
 
-- name: Log into ECR and Docker registry
-  hosts: ec2-instance
-  tasks:
-    - name: Retrieve ECR login command
-      command: aws ecr get-login-password --region us-east-2
-      register: ecr_login_command
+    - name: Install botocore and boto3
+      pip:
+        name:
+          - botocore
+          - boto3
+
+    - name: Get ECR token (using credentials plugin)
+      shell: "aws ecr get-login-password --region us-east-2 | awk '{print $1}' | base64 -d"
+      register: ecr_token
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('credential', 'aws-login') }}"
 
     - name: Log into ECR registry
-      command: "{{ ecr_login_command.stdout }}"
-      args:
-        executable: /bin/bash
+      docker_login:
+        registry_url: "339713096223.dkr.ecr.us-east-2.amazonaws.com"
+        debug: yes
+        username: "AWS"
+        password: "{{ ecr_token.stdout }}"
+        reauthorize: yes
 
-- name: Pull Docker image from ECR and run container
-  hosts: ec2-instance
-  tasks:
     - name: Pull Docker image from ECR
-      command: docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest
+      command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
 
     - name: Run Docker container
       ansible.builtin.docker_container:
