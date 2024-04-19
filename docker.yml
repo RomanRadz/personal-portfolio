@@ -1,6 +1,6 @@
 ---
 - hosts: ec2-instance
-  become: true
+  become: false
   tasks:
     - name: Update apt cache
       apt:
