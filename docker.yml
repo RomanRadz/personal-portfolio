@@ -1,65 +1,49 @@
----
-- hosts: ec2-instance
-  become: true
-  tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
 
-    - name: Install dependencies
-      apt:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - gnupg
-        - lsb-release
+- name: Install dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
 
-    - name: Remove conflicting package
-      apt:
-        name: containerd.io
-        state: absent
-      ignore_errors: yes
+- name: Remove conflicting package
+  apt:
+    name: containerd.io
+    state: absent
+  ignore_errors: yes
 
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
 
-    - name: Add user to docker group
-      user:
-        name: ubuntu
-        groups: docker
-        append: yes
+- name: Add user to docker group
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes
 
-    - name: Install botocore and boto3
-      pip:
-        name:
-          - botocore
-          - boto3
+- name: Log into ECR registry
+  command: $(aws ecr get-login --no-include-email --region us-east-2)
+  args:
+    executable: /bin/bash
 
-    - name: Login to ECR and Docker registry
-      shell: "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 339713096223.dkr.ecr.us-east-2.amazonaws.com"
+- name: Pull Docker image from ECR
+  command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
 
-    - name: Log into ECR registry
-      docker_login:
-        registry_url: "339713096223.dkr.ecr.us-east-2.amazonaws.com"
-        debug: yes
-        username: "AWS"
-        password: "{{ ecr_token.stdout }}"
-        reauthorize: yes
-
-    - name: Pull Docker image from ECR
-      command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
-
-    - name: Run Docker container
-      ansible.builtin.docker_container:
-        name: portfolio_container
-        image: 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest
-        ports:
-          - "80:80"
-        restart_policy: unless-stopped
-        detach: yes
+- name: Run Docker container
+  ansible.builtin.docker_container:
+    name: portfolio_container
+    image: 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest
+    ports:
+      - "80:80"
+    restart_policy: unless-stopped
+    detach: yes
