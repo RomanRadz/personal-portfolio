@@ -41,14 +41,12 @@
           - botocore
           - boto3
 
-    # - name: Get instance profile info
-    #   amazon.aws.aws_caller_info:
-    #   register: aws_info
-
     - name: Get ECR token (using environment variables)
-      shell: "aws ecr get-login-password --region us-east-2"
+      shell: "export AWS_ACCESS_KEY_ID={{ aws_access_key }} && export AWS_SECRET_ACCESS_KEY={{ aws_secret_key }} && aws ecr get-login-password --region us-east-2"
       register: ecr_token
-      aws_credential: "{{ lookup('credential', 'aws-login') }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
 
     - name: Log into ECR registry
       docker_login:
@@ -57,7 +55,6 @@
         username: "AWS"
         password: "{{ ecr_token.stdout }}"
         reauthorize: yes
-
 
     - name: Pull Docker image from ECR
       command: "docker pull 339713096223.dkr.ecr.us-east-2.amazonaws.com/personal-portfolio:latest"
